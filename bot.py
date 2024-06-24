@@ -16,6 +16,7 @@ bot = TelegramClient(
                 bot_token=TOKEN
                 )
 db = {}
+admins = [7196174452, 6369933143]  # List of admin user IDs (replace with actual IDs)
 
 @bot.on(events.NewMessage(pattern="^[!?/]start$"))
 async def stsrt(event):
@@ -94,17 +95,17 @@ Click The Below Button To See The Message!
 @bot.on(events.CallbackQuery(data="wspr"))
 async def ws(event):
     user = int(db["user_id"])
-    lol = [int(db["self"])]
-    lol.append(user)
-    if event.sender.id not in lol:
+    sender = int(db["self"])
+    authorized_users = [sender, user] + admins  # Adding admins to the list of authorized users
+    if event.sender.id not in authorized_users:
         await event.answer("🔐 This message is not for you!", alert=True)
         return
     msg = db["msg"]
     if msg == []:
-        await event.anwswer(
-                "Oops!\nIt's looks like message got deleted from my server!", alert=True)
+        await event.answer(
+                "Oops!\nIt's looks like the message got deleted from my server!", alert=True)
         return
     await event.answer(msg, alert=True)
 
-print("Succesfully Started Bot!")
+print("Successfully Started Bot!")
 bot.run_until_disconnected()
